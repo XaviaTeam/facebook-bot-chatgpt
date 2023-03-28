@@ -1,5 +1,13 @@
 # facebook-bot-chatgpt
 
+## Table of Contents
+1. [Installation](#installation)
+2. [Setup](#setup)
+3. [Usage](#usage)
+4. [Screenshots](#screenshots)
+    + [Ai command](#ai-command)
+    + [Image generator](#image-generator)
+
 ## Installation
 
 clone the repository
@@ -24,10 +32,18 @@ Open .env.example, add your appstate (base64) using [c3c-fbstate](https://github
 $ mv .env.example .env
 ```
 
-<hr/>
-
 ## Usage
 
 ```bash
 $ npm start
 ```
+
+<hr/>
+
+## Screenshots
+
+### Ai command
+![screenshot1](https://github.com/XaviaTeam/facebook-bot-chatgpt/blob/main/assets/1.png?raw=true)
+
+### Image generator
+![screenshot1](https://github.com/XaviaTeam/facebook-bot-chatgpt/blob/main/assets/2.png?raw=true)
