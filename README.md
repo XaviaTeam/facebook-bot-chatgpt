@@ -18,7 +18,7 @@ $ npm install
 
 ## Setup
 
-Open .env.example, add your appstate, openaikey, and change prefix to your liking, then save it as .env
+Open .env.example, add your appstate (base64) using [c3c-fbstate](https://github.com/c3cbot/c3c-fbstate), openaikey, and change prefix to your liking, then save it as .env
 
 ```bash
 $ mv .env.example .env
