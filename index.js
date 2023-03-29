@@ -1,6 +1,6 @@
-import { OpenAIApi, Configuration } from "openai";
-import { Client } from "fca-utils";
 import axios from "axios";
+import { Client } from "fca-utils";
+import { Configuration, OpenAIApi } from "openai";
 
 const config = new Configuration({
     apiKey: process.env.OPENAI_KEY
@@ -15,10 +15,11 @@ const client = new Client({
 
 client.openServer(process.env.PORT);
 client.loginWithAppState(process.env.APPSTATE);
-client.on('ready', () => console.log("Logged in!"));
+client.on('ready', (_, bid) => console.log("Logged in as", bid, `[${process.env.PREFIX}]`));
 
 client.on('command', (command) => {
     if (command.name === "ai") {
+        client.getApi()?.sendTypingIndicator(command.message.threadID);
         openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             max_tokens: 1000,
@@ -27,8 +28,19 @@ client.on('command', (command) => {
                 role: "user",
                 content: command.commandArgs.join(" ")
             }]
-        }).then(res => {
-            command.message.reply(res.data.choices[0].message.content)
+        }).then(async res => {
+            try {
+                const parsedContent = (await axios.get(`https://xva-api.up.railway.app/api/extractgpt?content=${encodeURIComponent(res.data.choices[0].message.content)}&maxCharacterPerLine=6000`)).data;
+                const result = parsedContent.data.result;
+
+                for (let i = 0; i < result.length; i++) {
+                    await command.message[i === 0 ? "reply" : "send"](result[i])
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            } catch (e) {
+                console.error(e.response.data);
+                command.message.reply("An error occurred!")
+            }
         }).catch(e => {
             console.error(e.response.data);
             command.message.reply("An error occurred!")
@@ -40,11 +52,8 @@ client.on('command', (command) => {
             prompt: command.commandArgs.join(" "),
             size: "512x512",
             response_format: "url"
-        }).then(async res => {
-            command.message.reply({
-                body: "",
-                attachment: (await axios.get(res.data.data[0].url, { responseType: "stream" })).data
-            })
+        }).then(res => {
+            command.message.sendAttachment(res.data.data[0].url);
         }).catch(e => {
             console.error(e.response.data);
             command.message.reply("An error occurred!")
