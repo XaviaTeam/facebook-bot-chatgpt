@@ -19,7 +19,6 @@ client.on('ready', (_, bid) => console.log("Logged in as", bid, `[${process.env.
 
 client.on('command', (command) => {
     if (command.name === "ai") {
-        client.getApi()?.sendTypingIndicator(command.message.threadID);
         openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             max_tokens: 1000,
